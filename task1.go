@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"fmt"+"strings"
 )
 
 /*使用函数包：
