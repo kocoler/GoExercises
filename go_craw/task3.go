@@ -14,7 +14,7 @@ func main() {
 	newurl := "https://accounts.douban.com/j/mobile/login/basic"
 	data := url.Values{}
 	data.Set("name","13167302162")
-	data.Set("password","ccnu200181dx")
+	data.Set("password","********")
 	data.Set("remember","false")
 	data.Set("ck","")
 	data.Set("ticket","")
