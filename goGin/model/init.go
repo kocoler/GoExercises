@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-const dns  = "root:CCNU200181_dx@/ginUsers?charset=utf8&parseTime=True&loc=Local"
+const dns  = "root:@/ginUsers?charset=utf8&parseTime=True&loc=Local"
 
 type Database struct {
 	Self *gorm.DB
