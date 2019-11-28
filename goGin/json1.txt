@@ -1,0 +1,8 @@
+{
+	"username":"13167",
+	"password":"ccnu20181d"
+}
+{
+"sex":"man",
+"favourite":"woman"
+}

@@ -19,4 +19,4 @@ func main() {
 	content := string(body)
 	defer re.Body.Close()
 	fmt.Println(content)
-}
+

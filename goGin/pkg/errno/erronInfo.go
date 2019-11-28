@@ -1,0 +1,5 @@
+package errno
+
+var (
+
+)

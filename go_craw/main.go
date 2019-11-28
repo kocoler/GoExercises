@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/PuerkitoBio/goquery"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
@@ -39,5 +41,12 @@ func main() {
 	//reg := regexp.MustCompile(`[\p{Han}]+`)   // 查找连续的汉字
 	//reg := regexp.MustCompile(`title=[...]<`)
 	//fmt.Println( reg.FindAllStringSubmatch(content, -1))
-	fmt.Println(content)
+	//fmt.Println(content)
+	dom,err := goquery.NewDocumentFromReader(strings.NewReader(content))
+	if err!=nil {
+		log.Fatalln(err)
+	}
+	dom.Find(".name").Each(func(i int, selection *goquery.Selection) {
+		fmt.Println(selection.Text())
+	})
 }
