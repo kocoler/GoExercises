@@ -38,6 +38,8 @@ func CreatStudent(studentName string) string {
 	}
 	var tmpUser = Student{StudentName:studentName}
 	if err := Db.Self.Model(&Student{}).Create(&tmpUser).Error; err != nil {
+		log.Print("CreatStudent:")
+		log.Println(err)
 		return "创建"+studentName+"错误"
 	}
 	return "创建"+studentName+"成功"
@@ -58,6 +60,8 @@ func CreatClassroom(classroom string) string {
 	var tmpClassRoom Classroom
 	tmpClassRoom.Classroom = classroom
 	if err := Db.Self.Model(&Classroom{}).Create(&tmpClassRoom).Error; err != nil {
+		log.Print("CreatClassroom:")
+		log.Println(err)
 		return "创建"+classroom+"错误"
 	}
 	return "创建"+classroom+"成功"
@@ -89,7 +93,8 @@ func StudentCourse(student string) []string {
 	var courses []Student
 	var a []string
 	if err := Db.Self.Model(&Student{}).Where(Student{StudentName:student}).Find(&courses).Error; err != nil {
-		log.Println("StudentCourse Database error")
+		log.Print("StudentCourse")
+		log.Println(err)
 		return a
 	}
 	for _,v := range courses {
@@ -136,6 +141,7 @@ func UpdateStudentInfo(tmpUser Student) string {
 func UpdateClassroomInfo(tmpClassroom Classroom) string {
 	if err := Db.Self.Model(&Classroom{}).Where(Classroom{Classroom:tmpClassroom.Classroom}).Update(&tmpClassroom).Error; err != nil {
 		log.Print("UpdateClassroomInfo:")
+		log.Println(err)
 		return "数据库错误"
 	}
 	return "更新教室信息成功"
@@ -173,6 +179,7 @@ func DisCourseClass(courseName string, class string) string {
 	tmpCourse.Course = courseName
 	tmpCourse.Classroom = class
 	if err := Db.Self.Model(&Course{}).Where(Course{Course:courseName}).Update(&tmpCourse).Error; err != nil {
+		log.Print("DisCourseClass:")
 		log.Println(err)
 		return "数据库错误"
 	}
