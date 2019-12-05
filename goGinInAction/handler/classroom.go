@@ -5,10 +5,12 @@ import (
 	"goGinInAction/model"
 )
 
+type classrooms struct {
+	Classroom	[]string	`json:"classroom"`
+}
+
 func CreatClassroom(c *gin.Context) {
-	type classrooms struct {
-		Classroom	[]string	`json:"classroom"`
-	}
+
 	var tmpClassroom classrooms
 	if err := c.BindJSON(&tmpClassroom); err != nil {
 		c.JSON(400,gin.H{

@@ -13,12 +13,13 @@ var lock sync.Mutex
 
 func Time() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		log.Println("正在操作中")
+		log.Println("正在操作中......")
 		log.Println("服务启动后的第"+strconv.Itoa(I)+"次操作")
 		lock.Lock()
 		I ++
 		lock.Unlock()
-		context.JSON(200,time.Now())
+		log.Println(time.Now())
+		//context.JSON(200,time.Now())
 		context.Next()
 	}
 }

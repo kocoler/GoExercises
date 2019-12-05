@@ -6,11 +6,18 @@ import (
 	"log"
 )
 
+type students struct {
+	Student	[]string	`json:"student"`
+}
+
+type tmpClassroom struct {
+	Classroom	[]string	`json:"classroom"`
+}
+
+
 func CreatStudent(c *gin.Context) {
 	//var tmpStudent model.Student
-	type students struct {
-		Student	[]string	`json:"student"`
-	}
+
 	var tmpStudent students
 	if err := c.BindJSON(&tmpStudent); err != nil {
 		c.JSON(400,gin.H{"message":"Bad Request!"})
@@ -38,9 +45,7 @@ func StudentCourse(c *gin.Context) {
 
 func StudentClassroom(c *gin.Context) {
 	studentName := c.Query("name")
-	type tmpClassroom struct {
-		Classroom	[]string	`json:"classroom"`
-	}
+
 	var classroom tmpClassroom
 	classroom.Classroom = model.StudentClassroom(studentName)
 	c.JSON(200,classroom)
@@ -75,9 +80,7 @@ func DisStudentCourse(c *gin.Context) {
 		})
 		return
 	}
-	type students struct {
-		Student	[]string	`json:"student"`
-	}
+
 	var tmpStudents students
 	if err := c.BindJSON(&tmpStudents); err != nil {
 		c.JSON(400,gin.H{"message":"Bad Request!"})

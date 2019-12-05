@@ -7,21 +7,21 @@ import (
 type Student struct {
 	Number	int	`gorm:"number" json:"-"`
 	Course	string	`gorm:"course" json:"-"`
-	StudentInfo	string	`gorm:"studentInfo" json:"studentInfo"`
-	StudentName	string	`gorm:"studentName" json:"studentName"`
+	StudentInfo	string	`gorm:"student_info" json:"student_info"`
+	StudentName	string	`gorm:"student_name" json:"student_name"`
 }
 
 type Classroom struct {
-	ClassroomId	int	`gorm:"classRoomId" json:"classRoomId"`
-	Classroom	string	`gorm:"classRoom" json:"classRoom"`
-	ClassroomInfo	string	`gorm:"classRoomInfo" json:"classRoomInfo"`
+	ClassroomId	int	`gorm:"classroom_id" json:"classroom_id"`
+	Classroom	string	`gorm:"class_room" json:"classroom"`
+	ClassroomInfo	string	`gorm:"classroom_info" json:"classroom_info"`
 }
 
 type Course struct {
-	CourseId	int	`gorm:"courseId" json:"courseId"`
+	CourseId	int	`gorm:"course_id" json:"course_id"`
 	Course	string	`gorm:"course" json:"course"`
-	CourseInfo	string	`gorm:"courseInfo" json:"courseInfo"`
-	Classroom	string	`gorm:"classRoom" json:"classRoom"`
+	CourseInfo	string	`gorm:"course_info" json:"course_info"`
+	Classroom	string	`gorm:"classroom" json:"classroom"`
 }
 
 func CheckStudent(studentName string) bool {
@@ -78,6 +78,8 @@ func CreatCourse(course string) string {
 	var tmpCourse Course
 	tmpCourse.Course = course
 	if err := Db.Self.Model(&Course{}).Create(&tmpCourse).Error; err != nil {
+		log.Print("CreatCourse")
+		log.Println(err)
 		return "创建"+course+"错误"
 	}
 	return "创建"+course+"成功"
@@ -100,7 +102,8 @@ func CourseClassroom(course string) []string {
 	var classroom []Course
 	var a []string
 	if err := Db.Self.Model(&Course{}).Where(Course{Course:course}).Find(&classroom).Error; err != nil {
-		log.Println("CourseClassroom Database error")
+		log.Print("CourseClassroom:")
+		log.Println(err)
 		return a
 	}
 	for _,v := range classroom {
@@ -123,6 +126,8 @@ func StudentClassroom(student string) []string {
 
 func UpdateStudentInfo(tmpUser Student) string {
 	if err := Db.Self.Model(&Student{}).Where(Student{StudentName:tmpUser.StudentName}).Update(&tmpUser).Error; err != nil {
+		log.Print("UpdateStudentInfo")
+		log.Println(err)
 		return "数据库错误"
 	}
 	return "更新学生信息成功"
@@ -130,6 +135,7 @@ func UpdateStudentInfo(tmpUser Student) string {
 
 func UpdateClassroomInfo(tmpClassroom Classroom) string {
 	if err := Db.Self.Model(&Classroom{}).Where(Classroom{Classroom:tmpClassroom.Classroom}).Update(&tmpClassroom).Error; err != nil {
+		log.Print("UpdateClassroomInfo:")
 		return "数据库错误"
 	}
 	return "更新教室信息成功"
@@ -137,6 +143,8 @@ func UpdateClassroomInfo(tmpClassroom Classroom) string {
 
 func UpdateCourseInfo(tmpCourse Course) string {
 	if err := Db.Self.Model(&Course{}).Where(Course{Course:tmpCourse.Course}).Update(&tmpCourse).Error; err != nil {
+		log.Print("UpdateCourseInfo:")
+		log.Println(err)
 		return "数据库错误"
 	}
 	return "更新课程信息成功"
@@ -150,6 +158,7 @@ func DisStudentCourse(studentName string, course string) string {
 	tmpStudent.StudentName = studentName
 	tmpStudent.Course = course
 	if err := Db.Self.Model(&Student{}).Where(Student{StudentName:studentName}).Update(&tmpStudent).Error; err != nil {
+		log.Print("DisStudentCourse:")
 		log.Println(err)
 		return "数据库错误"
 	}

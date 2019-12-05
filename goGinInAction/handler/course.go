@@ -5,10 +5,12 @@ import (
 	"goGinInAction/model"
 )
 
+type courses struct {
+	Course	[]string	`json:"course"`
+}
+
 func CreatCourse(c *gin.Context) {
-	type courses struct {
-		Course	[]string	`json:"course"`
-	}
+
 	var tmpCourse courses
 	if err := c.BindJSON(&tmpCourse); err != nil {
 		c.JSON(400,gin.H{"message":"Bad Request!"})
