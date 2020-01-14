@@ -1,10 +1,9 @@
-package main
+package model
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-
 	//"github.com/PuerkitoBio/goquery"
 	"github.com/asynccnu/data_service/pkg/errno"
 	"golang.org/x/net/publicsuffix"
@@ -26,45 +25,62 @@ type AccountReqeustParams struct {
 	JSESSIONID string
 }
 
-type Info struct {
-	Items []*InfoItem `json:"items" binding:"required"`
+type SuInfo struct {
+	Errcode string `json:"errcode"`
+	Errmsg string `json:"errmsg"`
+	User struct {
+		DeptID string `json:"deptId"`
+		DeptName string `json:"deptName"`
+		ID string `json:"id"`
+		Mobile string `json:"mobile"`
+		Name string `json:"name"`
+		SchoolEmail string `json:"schoolEmail"`
+		Status int `json:"status"`
+		UserFace string `json:"userFace"`
+		Username string `json:"username"`
+		Usernumber string `json:"usernumber"`
+		Usertype string `json:"usertype"`
+		UsertypeName string `json:"usertypeName"`
+		Xb string `json:"xb"`
+	} `json:"user"`
 }
 
-type InfoItem struct {
-	xslb string `json:"kcmc" binding:"required"` // 学生类别(本科/研究)
-	jgmc string `json:"kcmc" binding:"required"` // 学院名称
-}
-
-func main() {
+func GetUserInfoFormOne(sid string, pwd string) (SuInfo, error) {
+	var suInfo SuInfo
 	params,err := MakeAccountPreflightRequest()
 	if err != nil {
 		log.Println(err)
+		return suInfo,err
 	}
 
 	jar,err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	if err != nil {
 		log.Println(err)
+		return suInfo,err
 	}
 	client := http.Client{
 		Timeout: time.Duration(10 * time.Second),
 		Jar:     jar,
 	}
 	//fmt.Println(params)
-	err = MakeAccountRequest( "", "", params, &client)
+	err = MakeAccountRequest( sid, pwd, params, &client)
 	//err := MakeAccountRequest( "", "", params, &client)
-	log.Println(err)
+	if err != nil {
+		log.Println(err)
+		return suInfo,err
+	}
 	//MakeXKRequest(&client)
 	pt, err := MakeONERequest(&client)
+	if err != nil {
+		log.Println(err)
+		return suInfo,err
+	}
 	//fmt.Println(pt)
 	pt = "Bearer " + pt
-	fmt.Println(pt)
-
-	GetInfo(pt)
-	//MakeUndergraduateInfoRequest(&client,"2020","12")
-	//a, _ := MakeInfoRequest(&client,"2019","3")
-
-	//a, _ :=MakeUndergraduateInfoRequest(&client,"2020","3")
-	//fmt.Println(a)
+	//fmt.Println(pt)
+	suInfo = GetInfo(pt)
+	//fmt.Println(suInfo)
+	return suInfo, nil
 }
 
 func MakeONERequest(client *http.Client) (portal_token string, err error) {
@@ -117,7 +133,7 @@ func MakeAccountPreflightRequest() (*AccountReqeustParams, error) {
 		log.Println(err)
 		return params, err
 	}
-
+	//request.Header.Add("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36")
 	// 发起请求
 	resp, err := client.Do(request)
 	if err != nil {
@@ -137,7 +153,7 @@ func MakeAccountPreflightRequest() (*AccountReqeustParams, error) {
 
 	// 获取 Cookie 中的 JSESSIONID
 	for _, cookie := range resp.Cookies() {
-		fmt.Println(cookie.Value)
+		//fmt.Println(cookie.Value)
 		if cookie.Name == "JSESSIONID" {
 			JSESSIONID = cookie.Value
 		}
@@ -225,66 +241,10 @@ func MakeAccountRequest(sid, password string, params *AccountReqeustParams, clie
 	return nil
 }
 
-func MakeInfoRequest(client *http.Client, xnm, xqm string) (*Info, error) {
-	var xslb string
-	var jgmc string
-
-	v := url.Values{}
-
-	v.Set("xnm", xnm)
-	v.Set("xqm", xqm)
-	v.Set("_search", "false")
-	v.Set("nd", string(time.Now().UnixNano()))
-	v.Set("queryModel.showCount", "200")
-	v.Set("queryModel.currentPage", "1")
-	v.Set("queryModel.sortName", "")
-	v.Set("queryModel.sortOrder", "asc")
-	v.Set("time", "0")
-
-	request, err := http.NewRequest("POST", "http://one.ccnu.edu.cn/index#/app/home/user_center", strings.NewReader(v.Encode()))
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36")
-	request.Header.Set("Accept", "application/json, text/javascript, */*; q=0.01")
-	request.Header.Set("X-Requested-With", "XMLHttpRequest")
-	request.Header.Set("Origin", "http://xk.ccnu.edu.cn")
-	request.Header.Set("Host", "xk.ccnu.edu.cn")
-	request.Header.Set("Referer", "http://one.ccnu.edu.cn/index")
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Print(err)
-	}
-	content,_ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(content))
-	html, err := goquery.NewDocumentFromReader(strings.NewReader(string(content)))
-	defer resp.Body.Close()
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	html.Find(".user_center-cont").Find(".col-xs-9").Find(".row").Find("div").Each(func(i int, selection *goquery.Selection) {
-		if i == 7 {
-			jgmc = string(selection.Text())
-		}
-		if i == 13 {
-			xslb = string(selection.Text())
-		}
-	})
-
-	var info = &Info{}
-
-	fmt.Println(xslb);fmt.Println(jgmc)
-	fmt.Println(info)
-	if len(info.Items) == 0 {
-		return nil, errors.New("empty info list")
-	}
-	return info, nil
-}
-
-func GetInfo(pt string) {
+func GetInfo(pt string) SuInfo {
 	client1 := http.Client{}
 	v := url.Values{}
+
 	request, _ := http.NewRequest("POST","http://one.ccnu.edu.cn/user_portal/index",strings.NewReader(v.Encode()))
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36")
@@ -299,5 +259,11 @@ func GetInfo(pt string) {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(string(body))
+	//fmt.Println(string(body))
+	var tmpInfo SuInfo
+	err = json.Unmarshal(body,&tmpInfo)
+	if err != nil {
+		log.Println(err)
+	}
+	return tmpInfo
 }
