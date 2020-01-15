@@ -7,17 +7,16 @@ import (
 	"log"
 )
 
-type users_info struct {
-	Su       int       `gorm:"su"`
-	School   string    `gorm:"school"`
-	SendTime []uint8   `gorm:"send_time"`
-	TimeDate []uint8   `gorm:"time_date"`
-	TimeForm int       `gorm:"time_form"`
-	TimeEnd  int       `gorm:"time_end"`
+type users struct {
+	Sid       string       `gorm:"sid"`
+	College   string    `gorm:"college"`
+	Nike_name string   `gorm:"nike_name"`
+	Gender string   `gorm:"gender"`
+	Grade string       `gorm:"grade"`
 }
 
 func main() {
-	db, err := gorm.Open("mysql","root:ccnudx@tcp(localhost:3306)/users")
+	db, err := gorm.Open("mysql","root:ccnudx@tcp(localhost:3306)/mini_project")
 	defer db.Close()
 	if err != nil {
 		log.Println(err)
@@ -25,15 +24,15 @@ func main() {
 	db.SingularTable(true)
 
 	Db := db
-	var tmp []users_info
-	Db = Db.Model(users_info{}).Where(users_info{TimeForm:6}).Find(&tmp)
-	//fmt.Println(tmp)
-	Db = Db.Model(users_info{}).Where(users_info{TimeEnd:11}).Find(&tmp)
-	fmt.Println(tmp)
+	var tmp []users
 
-	for i := 0; i <= n; i ++ {
-		Db.Model().Where(users_info{})
-	}
-Db.
+	Db = Db.Model(users{}).Where(users{Nike_name:"1"})
+	Db = Db.Model(users{}).Where(users{College:"2"})
+	Db = Db.Model(users{}).Where(users{Gender:"3"}).Find(&tmp)
+
+	//Db = Db.Model(users_info{}).Where(users_info{TimeForm:6}).Find(&tmp)
+	//fmt.Println(tmp)
+	//Db = Db.Model(users_info{}).Where(users_info{TimeEnd:11}).Find(&tmp)
+	fmt.Println(tmp)
 
 }
