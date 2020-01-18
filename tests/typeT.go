@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"time"
+	"strconv"
 )
 
 func main() {
-	a := time.Now()
-	b,_ := ioutil.ReadAll(a)
-	fmt.Printf("%T",a)
+	//a := time.Now()
+	//fmt.Printf("%T",a)
+	var a string = "111"
+	b,_ := strconv.Atoi(string(a[1]))
+	fmt.Println(b)
 }

@@ -1,18 +1,15 @@
 package main
 
 import (
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"log"
 )
 
-type users struct {
-	Sid       string       `gorm:"sid"`
-	College   string    `gorm:"college"`
-	Nike_name string   `gorm:"nike_name"`
-	Gender string   `gorm:"gender"`
-	Grade string       `gorm:"grade"`
+type user struct {
+	User_id int    `gorm:"user_id"`
+	Qqq     int    `gorm:"qqq"`
+	Qwq     string `grom:"qwq"`
 }
 
 func main() {
@@ -24,15 +21,19 @@ func main() {
 	db.SingularTable(true)
 
 	Db := db
-	var tmp []users
+	var tmp user
 
-	Db = Db.Model(users{}).Where(users{Nike_name:"1"})
-	Db = Db.Model(users{}).Where(users{College:"2"})
-	Db = Db.Model(users{}).Where(users{Gender:"3"}).Find(&tmp)
+	//tmp.Sid = "1"
+	tmp.Qqq = 2
+	//tx := Db.Begin()
+	//tx = tx.Model(users{}).Where(users{Nike_name:"1"})
+	Db.Model(&user{}).Create(user{})
+	//Db = Db.Model(users{}).Where(users{Gender:"3"})
+	//tx = tx.Raw("`users`.`gender` = ? ",3)
+	//Db.Raw("SELECT * FROM users ")
+	//Db.Exec("gender = ")
+	//b := 6
+	//Db = Db.Where(" ABS(gender - ?) > 2",b)
 
-	//Db = Db.Model(users_info{}).Where(users_info{TimeForm:6}).Find(&tmp)
-	//fmt.Println(tmp)
-	//Db = Db.Model(users_info{}).Where(users_info{TimeEnd:11}).Find(&tmp)
-	fmt.Println(tmp)
 
 }
