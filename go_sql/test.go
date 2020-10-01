@@ -10,17 +10,17 @@ const (
 	DNS = "root:CCNU200181_dx@/ginUsers?charset=utf8&parseTime=True&loc=Local"
 )
 
-var db  *gorm.DB
+var db *gorm.DB
 
 type user struct {
 	//gorm.Model
-	Id      int   //`gorm:"primary_key"`//对应数据表的自增id
-	Name 	string    //`gorm:"not null"`
-	Sex     string
+	Id   int    //`gorm:"primary_key"`//对应数据表的自增id
+	Name string //`gorm:"not null"`
+	Sex  string
 	//Updated_at time.Time
 }
 
-func main()  {
+func main() {
 	db, err := gorm.Open("mysql", DNS)
 	if err != nil {
 		fmt.Println(err)
@@ -36,7 +36,7 @@ func main()  {
 	//db.Create(users)
 	//db.Model(&user).Update("CreatAt",time.Now())
 	//var b  = User{}
-/*	db.Model(&users).Update(user{
+	/*	db.Model(&users).Update(user{
 		Id:   1,
 		Name: "111",
 		Sex:"11",
@@ -48,9 +48,8 @@ func main()  {
 		Sex:  "111",
 	}*/
 	var b user
-	db.Model(&user{}).Where(&user{Name:"2"}).Find(&b)
+	db.Model(&user{}).Where(&user{Name: "2"}).Find(&b)
 	fmt.Println(b.Name)
-
 
 	//fmt.Println(time.Now())
 }

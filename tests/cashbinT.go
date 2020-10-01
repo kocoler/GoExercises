@@ -1,10 +1,46 @@
 package main
 
-import "github.com/casbin/casbin/v2"
+import (
+	"fmt"
+	"github.com/casbin/casbin/v2"
+	_ "github.com/go-sql-driver/mysql"
+
+	xormadapter "github.com/casbin/xorm-adapter"
+)
 
 func main() {
-	e, err := casbin.NewEnforcer("", "")
-	e.rm.
+	// Initialize a Xorm adapter and use it in a Casbin enforcer:
+	// The adapter will use the MySQL database named "casbin".
+	// If it doesn't exist, the adapter will create it automatically.
+	a, err := xormadapter.NewAdapter("mysql", "root:ccnudx@tcp(127.0.0.1:3306)/") // Your driver and data source.
 
+	if err != nil {
+		fmt.Println(err)
+	}
 
+	// Or you can use an existing DB "abc" like this:
+	// The adapter will use the table named "casbin_rule".
+	// If it doesn't exist, the adapter will create it automatically.
+	// a := xormadapter.NewAdapter("mysql", "mysql_username:mysql_password@tcp(127.0.0.1:3306)/abc", true)
+
+	e, err := casbin.NewEnforcer("/home/kocoler/go/src/github.com/kocoler/GoExercises/tests/rbac_model.conf", a, true)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Load the policy from DB.
+	e.LoadPolicy()
+
+	// Check the permission.
+	e.AddRoleForUser("alice", "mod")
+
+	fmt.Println(e.HasRoleForUser("alice", "mod"))
+	e.Enforce("alice", "data1", "read")
+
+	// Modify the policy.
+	// e.AddPolicy(...)
+	// e.RemovePolicy(...)
+
+	// Save the policy back to DB.
+	e.SavePolicy()
 }

@@ -10,6 +10,9 @@ func print(i int) {
 	for i := 0; i <= 10; i ++ {
 		time.Sleep(1 * time.Second)
 		fmt.Println(i)
+		if i == 3 {
+			panic("11")
+		}
 	}
 }
 

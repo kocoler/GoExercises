@@ -9,18 +9,18 @@ import (
 func main() {
 	var i int64 = -1
 	var j int64
-	ch := make(chan int64,1)
+	ch := make(chan int64, 1)
 	runtime.GOMAXPROCS(2)
 	ch <- i
 	go func() {
 
 		for {
 			select {
-			case j = <- ch:
+			case j = <-ch:
 				fmt.Println(j)
 				//default:
 			}
-		time.Sleep(time.Second)
+			time.Sleep(time.Second)
 		}
 	}()
 

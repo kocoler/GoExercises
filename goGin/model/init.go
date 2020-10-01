@@ -2,11 +2,11 @@ package model
 
 import (
 	"github.com/jinzhu/gorm"
-	_"github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 )
 
-const dns  = "root:@/ginUsers?charset=utf8&parseTime=True&loc=Local"
+const dns = "root:@/ginUsers?charset=utf8&parseTime=True&loc=Local"
 
 type Database struct {
 	Self *gorm.DB
@@ -14,8 +14,8 @@ type Database struct {
 
 var Db *Database
 
-func getDatabase() (*gorm.DB,error) {
-	db, err := gorm.Open("mysql",dns)
+func getDatabase() (*gorm.DB, error) {
+	db, err := gorm.Open("mysql", dns)
 	if err != nil {
 		//log.Fatal(err)
 		return nil, err
@@ -29,13 +29,12 @@ func (db *Database) Init() {
 		log.Fatal(err)
 	}
 	Db = &Database{
-		Self:newdb,
+		Self: newdb,
 	}
 }
 
 func (db *Database) Close() {
-	if err := Db.Self.Close(); err!=nil {
+	if err := Db.Self.Close(); err != nil {
 		log.Println(err)
 	}
 }
-

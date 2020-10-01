@@ -10,12 +10,12 @@ import (
 )
 
 type UserInfo struct {
-	Sid string `json:"-" gorm:"sid"`
-	NickName string `json:"nick_name" gorm:"nick_name"`
-	College string `json:"college" gorm:"college"`
-	Gender string `json:"gender" gorm:"gender"`
+	Sid                   string `json:"-" gorm:"sid"`
+	NickName              string `json:"nick_name" gorm:"nick_name"`
+	College               string `json:"college" gorm:"college"`
+	Gender                string `json:"gender" gorm:"gender"`
 	PersonalizedSignature string `json:"personalized_signature" gorm:"personalized_signature"`
-	ContactWay string `json:"contact_way" gorm:"contact_way"`
+	ContactWay            string `json:"contact_way" gorm:"contact_way"`
 }
 
 type LoginInfo struct {
@@ -28,15 +28,15 @@ func UserLogin(c *gin.Context) {
 	var tmpUser model.SuInfo
 	var tmpLoginInfo LoginInfo
 	if err := c.BindJSON(&tmpLoginInfo); err != nil {
-		c.JSON(400,gin.H{
-			"message":"Bad Request!",
+		c.JSON(400, gin.H{
+			"message": "Bad Request!",
 		})
 		return
 	}
 	tmpUser, err := model.GetUserInfoFormOne(tmpLoginInfo.Sid, tmpLoginInfo.Pwd)
-	if  err != nil {
-		c.JSON(400,gin.H{
-			"message":err,
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": err,
 		})
 		return
 	}
@@ -55,23 +55,23 @@ func UserLogin(c *gin.Context) {
 
 	fmt.Println(user)
 
-	c.Header("token",middleware.ProduceToken(user.Sid))
+	c.Header("token", middleware.ProduceToken(user.Sid))
 }
 
 func Test(c *gin.Context) {
-	a,b := c.Get("uid")
-	fmt.Println(a,b)
+	a, b := c.Get("uid")
+	fmt.Println(a, b)
 }
 
 func getGender(n string) string {
 	if n == "1" {
 		return "男"
-	}else {
+	} else {
 		return "女"
 	}
 }
 
-func  getRandomString(l int) string {
+func getRandomString(l int) string {
 	str := "0123456789abcdefghijklmnopqrstuvwxyz"
 	bytes := []byte(str)
 	var result []byte

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/goquery"
 	"fmt"
+	"github.com/goquery"
 	"net/http"
 	"strings"
 )
@@ -20,19 +20,17 @@ func main() {
 	defer re.Body.Close()
 	var x int
 	fmt.Printf("输入x:")
-	fmt.Scanf("%d",&x)
-	x --
+	fmt.Scanf("%d", &x)
+	x--
 	dom.Find(".title").Each(func(i int, selection *goquery.Selection) {
 		/*selection.Find(".title").Each(func(i int, selection1 *goquery.Selection) {
 		//	fmt.Println(selection1.Text())
 		})*/
 		if i == x {
-			str := strings.Replace(selection.Text()," ","",-1)
+			str := strings.Replace(selection.Text(), " ", "", -1)
 			fmt.Println(str)
 		}
 
 	})
 
-
 }
-

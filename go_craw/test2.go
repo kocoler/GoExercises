@@ -12,13 +12,13 @@ import (
 func main() {
 	newurl := "https://accounts.douban.com/j/mobile/login/basic"
 	data := url.Values{}
-	data.Set("name","13167302162")
-	data.Set("password","ccnu200181dx")
-	data.Set("remember","false")
-	data.Set("ck","")
-	data.Set("ticket","")
+	data.Set("name", "13167302162")
+	data.Set("password", "ccnu200181dx")
+	data.Set("remember", "false")
+	data.Set("ck", "")
+	data.Set("ticket", "")
 	load := strings.NewReader(data.Encode())
-	req, err := http.NewRequest("POST",newurl,load)
+	req, err := http.NewRequest("POST", newurl, load)
 	if err != nil {
 		panic(err)
 		return
@@ -31,7 +31,7 @@ func main() {
 	req.Header.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36")
 	req.Header.Add("X-Requested-With", "XMLHttpRequest")
 	res, err := http.DefaultClient.Do(req)
-	if err != nil  {
+	if err != nil {
 		panic(err)
 		return
 	}
@@ -44,12 +44,12 @@ func main() {
 	fmt.Printf(string(body))
 	cookie := res.Cookies()
 	newurl = "https://www.douban.com/people/206516033/"
-	req1,err := http.NewRequest("GET",newurl,nil)
+	req1, err := http.NewRequest("GET", newurl, nil)
 	if err != nil {
 		panic(err)
 	}
-	req1.Header.Add("User-Agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36")
-	for _,cookieq := range cookie {
+	req1.Header.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36")
+	for _, cookieq := range cookie {
 		req1.AddCookie(cookieq)
 	}
 	res1, err := http.DefaultClient.Do(req1)
@@ -66,4 +66,3 @@ func main() {
 	})
 	//fmt.Printf("%s",content)
 }
-

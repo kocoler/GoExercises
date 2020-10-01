@@ -27,53 +27,53 @@ type AccountReqeustParams struct {
 
 type SuInfo struct {
 	Errcode string `json:"errcode"`
-	Errmsg string `json:"errmsg"`
-	User struct {
-		DeptID string `json:"deptId"`
-		DeptName string `json:"deptName"`
-		ID string `json:"id"`
-		Mobile string `json:"mobile"`
-		Name string `json:"name"`
-		SchoolEmail string `json:"schoolEmail"`
-		Status int `json:"status"`
-		UserFace string `json:"userFace"`
-		Username string `json:"username"`
-		Usernumber string `json:"usernumber"`
-		Usertype string `json:"usertype"`
+	Errmsg  string `json:"errmsg"`
+	User    struct {
+		DeptID       string `json:"deptId"`
+		DeptName     string `json:"deptName"`
+		ID           string `json:"id"`
+		Mobile       string `json:"mobile"`
+		Name         string `json:"name"`
+		SchoolEmail  string `json:"schoolEmail"`
+		Status       int    `json:"status"`
+		UserFace     string `json:"userFace"`
+		Username     string `json:"username"`
+		Usernumber   string `json:"usernumber"`
+		Usertype     string `json:"usertype"`
 		UsertypeName string `json:"usertypeName"`
-		Xb string `json:"xb"`
+		Xb           string `json:"xb"`
 	} `json:"user"`
 }
 
 func GetUserInfoFormOne(sid string, pwd string) (SuInfo, error) {
 	var suInfo SuInfo
-	params,err := MakeAccountPreflightRequest()
+	params, err := MakeAccountPreflightRequest()
 	if err != nil {
 		log.Println(err)
-		return suInfo,err
+		return suInfo, err
 	}
 
-	jar,err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	if err != nil {
 		log.Println(err)
-		return suInfo,err
+		return suInfo, err
 	}
 	client := http.Client{
 		Timeout: time.Duration(10 * time.Second),
 		Jar:     jar,
 	}
 	//fmt.Println(params)
-	err = MakeAccountRequest( sid, pwd, params, &client)
+	err = MakeAccountRequest(sid, pwd, params, &client)
 	//err := MakeAccountRequest( "", "", params, &client)
 	if err != nil {
 		log.Println(err)
-		return suInfo,err
+		return suInfo, err
 	}
 	//MakeXKRequest(&client)
 	pt, err := MakeONERequest(&client)
 	if err != nil {
 		log.Println(err)
-		return suInfo,err
+		return suInfo, err
 	}
 	//fmt.Println(pt)
 	pt = "Bearer " + pt
@@ -87,19 +87,19 @@ func MakeONERequest(client *http.Client) (portal_token string, err error) {
 	request, err := http.NewRequest("GET", "http://one.ccnu.edu.cn", nil)
 	if err != nil {
 		log.Println(err)
-		return "",err
+		return "", err
 	}
 
 	_, err = client.Do(request)
 	if err != nil {
 		log.Println(err)
-		return "",err
+		return "", err
 	}
 
 	u, err := url.Parse("http://one.ccnu.edu.cn")
 	if err != nil {
 		log.Println(err)
-		return "",err
+		return "", err
 	}
 
 	var pt string
@@ -110,7 +110,7 @@ func MakeONERequest(client *http.Client) (portal_token string, err error) {
 		}
 		fmt.Printf("  %s: %s\n", cookie.Name, cookie.Value)
 	}
-	return pt,nil
+	return pt, nil
 }
 
 // 预处理，打开 account.ccnu.edu.cn 获取模拟登陆需要的表单字段
@@ -212,10 +212,9 @@ func MakeAccountRequest(sid, password string, params *AccountReqeustParams, clie
 	v.Set("_eventId", params._eventId)
 	v.Set("submit", params.submit)
 	//fmt.Println(strings.NewReader(v.Encode()))
-		request, err := http.NewRequest("POST", "https://account.ccnu.edu.cn/cas/login;jsessionid="+params.JSESSIONID, strings.NewReader(v.Encode()))
+	request, err := http.NewRequest("POST", "https://account.ccnu.edu.cn/cas/login;jsessionid="+params.JSESSIONID, strings.NewReader(v.Encode()))
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36")
-
 
 	resp, err := client.Do(request)
 	if err != nil {
@@ -245,7 +244,7 @@ func GetInfo(pt string) SuInfo {
 	client1 := http.Client{}
 	v := url.Values{}
 
-	request, _ := http.NewRequest("POST","http://one.ccnu.edu.cn/user_portal/index",strings.NewReader(v.Encode()))
+	request, _ := http.NewRequest("POST", "http://one.ccnu.edu.cn/user_portal/index", strings.NewReader(v.Encode()))
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36")
 	request.Header.Set("Authorization", pt)
@@ -261,7 +260,7 @@ func GetInfo(pt string) SuInfo {
 	}
 	//fmt.Println(string(body))
 	var tmpInfo SuInfo
-	err = json.Unmarshal(body,&tmpInfo)
+	err = json.Unmarshal(body, &tmpInfo)
 	if err != nil {
 		log.Println(err)
 	}

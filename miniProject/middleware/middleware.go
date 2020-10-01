@@ -18,14 +18,14 @@ type jwtClaims struct {
 }
 
 var (
-	secret = "miniProject"  //salt
-	ExpireTime = 3600  //token expire time
+	secret     = "miniProject" //salt
+	ExpireTime = 3600          //token expire time
 )
 
 func JwtAAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("token")
-	/*	if token == "" {
+		/*	if token == "" {
 			c.JSON(http.StatusForbidden, gin.H{
 				"status": "403",
 				"msg": "token Invalid",
@@ -35,10 +35,10 @@ func JwtAAuth() gin.HandlerFunc {
 		//refresh(c)
 		claim, err := verifyToken(token)
 		if err != nil {
-			c.String(http.StatusBadRequest,err.Error())
+			c.String(http.StatusBadRequest, err.Error())
 			c.Abort()
 		}
-		c.Set("uid",claim.UserID)
+		c.Set("uid", claim.UserID)
 		//fmt.Println(token)
 		fmt.Println(claim.UserID)
 		c.Next()
@@ -47,14 +47,14 @@ func JwtAAuth() gin.HandlerFunc {
 }
 
 func ProduceToken(uid string) string {
-	id,_ := strconv.Atoi(uid)
+	id, _ := strconv.Atoi(uid)
 	claims := &jwtClaims{
 		UserID: id,
 	}
 	claims.IssuedAt = time.Now().Unix()
 	claims.ExpiresAt = time.Now().Add(time.Second * time.Duration(ExpireTime)).Unix()
 	singedToken, err := genToken(claims)
-	fmt.Println(singedToken,err)
+	fmt.Println(singedToken, err)
 	return singedToken
 }
 
@@ -72,7 +72,7 @@ func verifyToken(varifyToken string) (*jwtClaims, error) {
 		return []byte(secret), nil
 	})
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	claims, ok := token.Claims.(*jwtClaims)
 	if !ok {
