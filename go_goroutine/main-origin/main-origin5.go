@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-
 func main() {
 	var i int64 = -1
 	runtime.GOMAXPROCS(2)
@@ -19,7 +18,7 @@ func main() {
 	}()
 
 	for {
-		atomic.AddInt64(&i,1)
+		atomic.AddInt64(&i, 1)
 	}
 
 }

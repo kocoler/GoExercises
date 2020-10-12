@@ -12,22 +12,22 @@ func PasswordHash(password string) (string, string, error) {
 	h.Write([]byte(password))
 	salt, err := turnSalt(6)
 	if err != nil {
-		return "","",err
+		return "", "", err
 	}
 	h.Write(salt)
 
 	passwordHash := hex.EncodeToString(h.Sum(nil))
 	//log.Println(passwordHash)
-	return passwordHash,hex.EncodeToString(salt),nil
+	return passwordHash, hex.EncodeToString(salt), nil
 }
 
-func turnSalt(len int) ([]byte,error) {
+func turnSalt(len int) ([]byte, error) {
 	salt := make([]byte, len)
-	_,err := io.ReadFull(rand.Reader, salt)
+	_, err := io.ReadFull(rand.Reader, salt)
 	if err != nil {
-		return []byte{},err
+		return []byte{}, err
 	}
-	return salt,nil
+	return salt, nil
 }
 
 func Check(password string, passwordHash string, salt string) bool {

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/PuerkitoBio/goquery"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,7 +31,6 @@ func main() {
 	}
 	content := string(body)
 
-
 	/*if err != nil {
 		panic(err)
 	}*/
@@ -42,8 +41,8 @@ func main() {
 	//reg := regexp.MustCompile(`title=[...]<`)
 	//fmt.Println( reg.FindAllStringSubmatch(content, -1))
 	//fmt.Println(content)
-	dom,err := goquery.NewDocumentFromReader(strings.NewReader(content))
-	if err!=nil {
+	dom, err := goquery.NewDocumentFromReader(strings.NewReader(content))
+	if err != nil {
 		log.Fatalln(err)
 	}
 	dom.Find(".name").Each(func(i int, selection *goquery.Selection) {

@@ -5,11 +5,12 @@ import (
 	"goGin/router"
 	"log"
 )
-func main()  {
+
+func main() {
 	model.Db.Init()
 	defer model.Db.Close()
 	router.Init()
-	if err := router.Router.Run(":9090"); err!= nil {
+	if err := router.Router.Run(":9090"); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("SUCCEED IN SILENCE")

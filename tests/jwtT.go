@@ -22,7 +22,7 @@ func main() {
 	token := jwt.NewWithClaims(jwt.SigningMethodPS256,claims)
 	//key := "mini"
 	//signKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte("key"))
-	signedToken, err := token.SignedString([]byte("signKey"))
+	signedTok3en, err := token.SignedString([]byte("signKey"))
 	if err != nil {
 		fmt.Print("qwwq")
 		log.Println(err)

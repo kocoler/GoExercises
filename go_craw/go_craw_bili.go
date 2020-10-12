@@ -23,12 +23,12 @@ func main() {
 	//fmt.Println(string(content))
 	/*dom, err := goquery2.NewDocumentFromReader(rep.Body)
 
-	*/
-	for i := 1 ; i < 5 ; i++ {
-		fmt.Printf("第 %d 页：\n",i)
-		newurl := "https://search.bilibili.com/all?keyword=%E5%8D%8E%E4%B8%AD%E5%B8%88%E8%8C%83%E5%A4%A7%E5%AD%A6&from_source=banner_search"+"&page="+strconv.Itoa(i)
-		req, err := http.NewRequest("GET",newurl,nil)
-		req.Header.Add("User-Agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36")
+	 */
+	for i := 1; i < 5; i++ {
+		fmt.Printf("第 %d 页：\n", i)
+		newurl := "https://search.bilibili.com/all?keyword=%E5%8D%8E%E4%B8%AD%E5%B8%88%E8%8C%83%E5%A4%A7%E5%AD%A6&from_source=banner_search" + "&page=" + strconv.Itoa(i)
+		req, err := http.NewRequest("GET", newurl, nil)
+		req.Header.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36")
 		rep, err := http.DefaultClient.Do(req)
 		if err != nil {
 			panic(err)
@@ -41,4 +41,3 @@ func main() {
 	}
 
 }
-

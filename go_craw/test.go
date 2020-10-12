@@ -33,7 +33,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		dom.Find(".search-tab").Each(func(i int, selection *goquery.Selection){
+		dom.Find(".search-tab").Each(func(i int, selection *goquery.Selection) {
 			// fmt.Println(selection.Text())
 			selection.Find(".tit").Each(func(i int, title *goquery.Selection) {
 				// fmt.Println(title.Text())

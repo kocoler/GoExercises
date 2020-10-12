@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/go-gomail/gomail"
 	"log"
@@ -17,9 +18,9 @@ func SendMail(mailTo []string, subject string, body string) error {
 	//}
 
 	mailConn := map[string]string{
-		"user": "tsglsdrs@163.com",
-		"pass": "ccnu2020dx",
-		"host": "smtp.163.com",
+		"user": "no-reply@casbin.com",
+		"pass": "1qaz2wsx=,.",
+		"host": "smtp.qiye.aliyun.com",
 		"port": "465",
 	}
 
@@ -27,7 +28,7 @@ func SendMail(mailTo []string, subject string, body string) error {
 
 	m := gomail.NewMessage()
 
-	m.SetHeader("From",  m.FormatAddress(mailConn["user"], "孤独星球"))
+	m.SetHeader("From",  m.FormatAddress(mailConn["user"], "w"))
 	m.SetHeader("To", mailTo...)    //发送给多个用户
 	m.SetHeader("Subject", subject) //设置邮件主题
 	m.SetBody("text/html", body)    //设置邮件正文
@@ -41,14 +42,22 @@ func SendMail(mailTo []string, subject string, body string) error {
 func main() {
 
 	mailTo := []string{
-		"2391542095@qq.com",
+		"tsglsdrs@163.com",
 	}
 
-	subject := "孤独星球　新消息提醒"
+	subject := "ww"
 
-	body := "顺便实现了一下"
+	url := "http://localhost:3000/forgot?method=email&id=20&code=PERWYqZzWM6zaadOnxgx&username=wwwwww"
+	var bt bytes.Buffer
+	bt.WriteString("<a href=\"")
+	bt.WriteString(url)
+	bt.WriteString("\"")
+	bt.WriteString(">")
+	bt.WriteString(url)
+	bt.WriteString("</a>")
+	//body := "<a href=\""+"https://www.baidu.com/"+"\">"+"oo"+"</a>"
 
-	err := SendMail(mailTo, subject, body)
+	err := SendMail(mailTo, subject, bt.String())
 	if err != nil {
 		log.Println(err)
 		fmt.Println("send fail")

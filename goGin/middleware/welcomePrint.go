@@ -16,12 +16,10 @@ func Welcome() gin.HandlerFunc {
 		name, err := cookiesFuncs.CheckCookiesName(context)
 		if err != nil {
 			log.Println(err)
-			context.JSON(400,gin.H{
-
-			})
+			context.JSON(400, gin.H{})
 		}
-		context.JSON(200,gin.H{
-			"welcome":name,
+		context.JSON(200, gin.H{
+			"welcome": name,
 		})
 		context.Next()
 	}

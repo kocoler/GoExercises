@@ -11,7 +11,7 @@ func TimeLog() gin.HandlerFunc {
 		startTime := time.Now()
 		context.Next()
 		endTime := time.Now()
-		log.Println("Cost:",endTime.Sub(startTime).Nanoseconds())
+		log.Println("Cost:", endTime.Sub(startTime).Nanoseconds())
 		//fmt.Println(startTime)
 	}
 }

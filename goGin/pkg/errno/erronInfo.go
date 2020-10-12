@@ -1,5 +1,3 @@
 package errno
 
-var (
-
-)
+var ()

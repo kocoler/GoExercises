@@ -15,12 +15,12 @@ type Database struct {
 var Db *Database
 
 func getDatabase() (*gorm.DB, error) {
-	db, err := gorm.Open("mysql",dns)
+	db, err := gorm.Open("mysql", dns)
 	if err != nil {
 		log.Fatal(err)
-		return nil,err
+		return nil, err
 	}
-	return db,nil
+	return db, nil
 }
 
 func (db *Database) Init() {
@@ -29,7 +29,7 @@ func (db *Database) Init() {
 		log.Print("数据库初始化错误")
 		log.Println(err)
 	}
-	Db = &Database{Self:newDb}
+	Db = &Database{Self: newDb}
 	//return
 }
 

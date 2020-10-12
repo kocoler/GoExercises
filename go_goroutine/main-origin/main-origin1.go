@@ -23,8 +23,8 @@ func main() {
 	}()
 	for {
 		wg.Add(1)
-		i ++
+		i++
 		//time.Sleep(time.Second)
 		wg.Done()
-		}
+	}
 }

@@ -27,8 +27,8 @@ func main() {
 	}()
 
 	for {
-		i ++
+		i++
 		l.PushBack(i)
-		}
+	}
 
 }
