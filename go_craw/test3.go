@@ -30,7 +30,7 @@ func main() {
 		return
 	}
 	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Type", "application/x-www-gorm-urlencoded")
 	req.Header.Add("Origin", "https://accounts.douban.com/passport/login_popup?login_source=anony")
 	req.Header.Add("Referer", "https://accounts.douban.com/passport/login_popup?login_source=anony")
 	req.Header.Add("Sec-Fetch-Mode", "cors")

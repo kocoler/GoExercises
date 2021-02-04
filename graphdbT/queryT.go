@@ -38,7 +38,7 @@ func Query() {
 	req.Header.Add("X-GraphDB-Catch", "1000; throw")
 	req.Header.Add("X-Requested-With", "XMLHttpRequest")
 	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36")
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+	req.Header.Add("Content-Type", "application/x-www-gorm-urlencoded; charset=UTF-8")
 	req.Header.Add("Origin", "http://localhost:7200")
 	req.Header.Add("Sec-Fetch-Site", "same-origin")
 	req.Header.Add("Sec-Fetch-Mode", "cors")
