@@ -1,3 +1,5 @@
+package main
+
 func defangIPaddr(address string) string {
     if len(address) == 0 {
         return ""

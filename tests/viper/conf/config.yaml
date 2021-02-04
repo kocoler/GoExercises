@@ -1,0 +1,3 @@
+tenv: var in config.yaml
+tenv2:
+  env1: tenv2.env1 var in config.yaml

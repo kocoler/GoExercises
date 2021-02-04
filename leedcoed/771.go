@@ -1,3 +1,5 @@
+package main
+
 func numJewelsInStones(J string, S string) int {
     if len(J) == 0 || len (S) == 0 {
         return 0

@@ -1,3 +1,5 @@
+package main
+
 func findErrorNums(nums []int) []int {
     var a []int
     b := make(map[int]int)

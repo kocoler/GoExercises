@@ -1,3 +1,5 @@
+package main
+
 func myAtoi(str string) int {
     a := 0
     flag := 0

@@ -7,6 +7,12 @@ import (
 )
 
 func main() {
+	// 1612252334
+	fmt.Println(time.Now().Add(1 * time.Second).Unix())
+	fmt.Println(time.Now().Unix() - 1612252364)
+}
+
+func t1() {
 	timestr := "2020-05-02T01:00:00+0800"
 	//var n string
 	timestr = strings.ReplaceAll(timestr, "T", " ")

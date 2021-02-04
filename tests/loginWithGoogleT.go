@@ -20,7 +20,7 @@ var endpotin = oauth2.Endpoint{
 
 var googleOauthConfig = &oauth2.Config{
 	ClientID:     "971174326312-lbpsolq13mb9fnuu3fkg21ujlcoq3krh.apps.googleusercontent.com",
-	ClientSecret: "BEERqbis_x3u2GMzhGQvm6Ke",
+	ClientSecret: "",
 	RedirectURL:  "http://localhost:8000/GoogleCallback",
 	Scopes: []string{"https://www.googleapis.com/auth/userinfo.profile",
 		"https://www.googleapis.com/auth/userinfo.email"},

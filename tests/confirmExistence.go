@@ -109,22 +109,22 @@ func makeAccountPreflightRequest() (*accountReqeustParams, error) {
 
 	ltArr := ltReg.FindStringSubmatch(bodyStr)
 	if len(ltArr) != 2 {
-		log.Println("Can not get form paramater: lt")
-		return params, errors.New("Can not get form paramater: lt")
+		log.Println("Can not get gorm paramater: lt")
+		return params, errors.New("Can not get gorm paramater: lt")
 	}
 	lt = ltArr[1]
 
 	execArr := executionReg.FindStringSubmatch(bodyStr)
 	if len(execArr) != 2 {
-		log.Println("Can not get form paramater: execution")
-		return params, errors.New("Can not get form paramater: execution")
+		log.Println("Can not get gorm paramater: execution")
+		return params, errors.New("Can not get gorm paramater: execution")
 	}
 	execution = execArr[1]
 
 	_eventIdArr := _eventIdReg.FindStringSubmatch(bodyStr)
 	if len(_eventIdArr) != 2 {
-		log.Println("Can not get form paramater: _eventId")
-		return params, errors.New("Can not get form paramater: _eventId")
+		log.Println("Can not get gorm paramater: _eventId")
+		return params, errors.New("Can not get gorm paramater: _eventId")
 	}
 	_eventId = _eventIdArr[1]
 
@@ -149,7 +149,7 @@ func makeAccountRequest(sid, password string, params *accountReqeustParams, clie
 	v.Set("submit", params.submit)
 	//fmt.Println(strings.NewReader(v.Encode()))
 	request, err := http.NewRequest("POST", "https://account.ccnu.edu.cn/cas/login;jsessionid="+params.JSESSIONID, strings.NewReader(v.Encode()))
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Set("Content-Type", "application/x-www-gorm-urlencoded")
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36")
 
 

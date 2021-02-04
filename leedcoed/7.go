@@ -1,3 +1,5 @@
+package main
+
 func reverse(x int) int {
     a := 0
     for x!=0{

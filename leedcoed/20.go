@@ -1,3 +1,5 @@
+package main
+
 func isValid(s string) bool {
     if len(s)==1 {
         return false

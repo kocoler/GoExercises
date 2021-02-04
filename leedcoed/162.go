@@ -1,3 +1,5 @@
+package main
+
 func findPeakElement(nums []int) int {
     //a := 0
     /*if len(nums)==2 {

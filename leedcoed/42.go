@@ -1,3 +1,4 @@
+package main
 
 func trap(height []int) int {
     var num,leftm,rightm int

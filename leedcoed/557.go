@@ -1,3 +1,5 @@
+package main
+
 func reverseWords(s string) string {
     var a []byte
     var b []byte

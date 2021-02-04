@@ -1,11 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"log"
 	"math/rand"
+	"sort"
 	"time"
 )
 
@@ -27,7 +29,7 @@ func main(){
 	db.SingularTable(true)
 
 	var tmp users_info
-
+sort.Search()
 	var a int
 	db.Table("users_info").Count(&a)
 	fmt.Println(a)

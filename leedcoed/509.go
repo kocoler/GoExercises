@@ -1,3 +1,5 @@
+package main
+
 func fib(N int) int {
     if N==0{
         return 0
