@@ -22,6 +22,7 @@ func (h *IntHeap) Push(x interface{}) {
 }
 
 func (h *IntHeap) Pop() interface{} {
+	fmt.Println(h)
 	old := *h
 	n := len(old)
 	x := old[n-1]
@@ -95,6 +96,7 @@ func testInt() {
 	heap.Push(h, 3)
 	fmt.Printf("minimum: %d\n", (*h)[0])
 	for h.Len() > 0 {
+		//fmt.Println(h)
 		fmt.Printf("%d ", heap.Pop(h))
 	}
 }
