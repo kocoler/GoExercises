@@ -18,7 +18,7 @@ func mctFromLeafValues(arr []int) int {
 		minStack = append(minStack, arr[i])
 		stackLen ++
 	}
-
+int64
 	// stackLen > 2
 	for stackLen > 2 {
 		res += minStack[stackLen-1] * minStack[stackLen-2]
