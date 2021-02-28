@@ -28,18 +28,18 @@ func find(a int) int {
 }
 
 func union(a, b int) {
-	roota := find(a)
-	rootb := find(b)
-	if roota != rootb {
-		// 按秩合并
-		if rank[rootx] < rank[rooty] {
-			swap(rootx, rooty);
-		}
-		parent[rooty] = rootx;
-		count--;
-		// 如果秩相等，将父节点rootx秩 + 1
-		if (rank[rootx] == rank[rooty]) rank[rootx] += 1;
-	}
+	//roota := find(a)
+	//rootb := find(b)
+	//if roota != rootb {
+	//	// 按秩合并
+	//	if rank[rootx] < rank[rooty] {
+	//		swap(rootx, rooty);
+	//	}
+	//	parent[rooty] = rootx;
+	//	count--;
+	//	// 如果秩相等，将父节点rootx秩 + 1
+	//	if (rank[rootx] == rank[rooty]) rank[rootx] += 1;
+	//}
 	parent[find(a)] = find(b)
 }
 
