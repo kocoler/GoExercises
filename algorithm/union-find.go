@@ -68,7 +68,7 @@ func (s *MapUnionFind) Union(x, y int) bool {
 				rootX, rootY = rootY, rootX
 			}
 			s.parent[rootX] = rootY
-			s.rank[rootY] += s.rank[rootX]
+			s.rank[rootY] += s.rank[rod f dotX]
 		}
 		s.count--
 		return true
