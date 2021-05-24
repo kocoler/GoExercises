@@ -1,5 +1,11 @@
 package main
 
+import "fmt"
+
+func main() {
+	subsets([]int{1,2,3})
+}
+
 // 回溯
 // 经典子集
 func subsets(nums []int) [][]int {
@@ -8,6 +14,7 @@ func subsets(nums []int) [][]int {
 	var cur []int
 	var dfs func(n int)
 	dfs = func(n int) {
+		fmt.Println(cur, n)
 		if n == lenn {
 			r := make([]int, len(cur))
 			copy(r, cur)
