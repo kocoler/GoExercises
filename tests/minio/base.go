@@ -30,7 +30,7 @@ func initClient() (*minio.Client, error){
 	return minioClient, nil
 }
 
-func mackBucket(ctx context.Context, minioClient *minio.Client, bucketName string) {
+func makeBucket(ctx context.Context, minioClient *minio.Client, bucketName string) {
 	err := minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: ""})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
@@ -73,6 +73,74 @@ func getFile(ctx context.Context, minioClient *minio.Client, bucketName, objectN
 	}
 }
 
+func statFile(ctx context.Context, minioClient *minio.Client, bucketName, objectName, filePath string) {
+	objInfo, err := minioClient.StatObject(context.Background(), bucketName, objectName, minio.StatObjectOptions{})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(objInfo)
+}
+
+func list(ctx context.Context, minioClient *minio.Client, bucketName, objectName, filePath string) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	defer cancel()
+
+	objectCh := minioClient.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+		Prefix: filePath,
+		Recursive: false,
+	})
+	for object := range objectCh {
+		if object.Err != nil {
+			fmt.Println(object.Err)
+			return
+		}
+		fmt.Println(object.Key)
+	}
+}
+
+func remove(ctx context.Context, minioClient *minio.Client, bucketName, objectName, filePath string) {
+	opts := minio.RemoveObjectOptions {
+		GovernanceBypass: true,
+	}
+	err := minioClient.RemoveObject(context.Background(), bucketName, objectName, opts)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func removeDir(ctx context.Context, minioClient *minio.Client, bucketName, objectName, filePath string) {
+	opts := minio.RemoveObjectOptions {
+		GovernanceBypass: true,
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+
+	defer cancel()
+
+	objectCh := minioClient.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+		Prefix: filePath,
+		Recursive: false,
+	})
+	rc := make(chan object)
+	for object := range objectCh {
+		if object.Err != nil {
+			fmt.Println(object.Err)
+			return
+		}
+		if object.Key == objectName {
+			break
+		}
+		fmt.Println(object)
+	}
+	err := minioClient.RemoveObjects(context.Background(), bucketName, objectName, opts)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
 func main() {
 	ctx := context.Background()
 	minioClient, err := initClient()
@@ -84,8 +152,8 @@ func main() {
 	//location := "us-east-1" region
 
 	// Upload the zip file
-	objectName := "go.sum"
-	filePath := "go.sum"
+	objectName := "go.mod"
+	filePath := "go.mod"
 	//contentType := "application/zip"
-	getFile(ctx, minioClient, bucketName, objectName, filePath)
+	list(ctx, minioClient, bucketName, objectName, filePath)
 }
