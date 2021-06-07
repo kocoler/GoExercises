@@ -31,7 +31,7 @@ func main() {
 	//	log.Fatalf("storager read: %v", err)
 	//}
 	fmt.Println()
-	it, err := store.List("/Users/mac/go/src/github.com/kocoler/GoExercises/tests/gostorage/tmp", pairs.WithContinuationToken("hello3"))
+	it, err := store.List("tmp")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -39,9 +39,9 @@ func main() {
 	obj, err := it.Next()
 	for obj != nil {
 		fmt.Println("obj.Path:", obj.Path)
-		fmt.Println("obj.Mode:", obj.Mode)
+		//fmt.Println("obj.Mode:", obj.Mode)
 		fmt.Println("obj.Id", obj.ID)
-		fmt.Println("continue token", it.ContinuationToken())
+		//fmt.Println("continue token", it.ContinuationToken())
 		obj, err = it.Next()
 		if err != nil {
 			fmt.Println(err)

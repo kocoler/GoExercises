@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"io"
 	"log"
 	"os"
-
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 func initClient() (*minio.Client, error){
@@ -16,7 +15,7 @@ func initClient() (*minio.Client, error){
 	endpoint := "localhost:9090"
 	accessKeyID := "minioadmin"
 	secretAccessKey := "minioadmin"
-	useSSL := false
+	useSSL := true
 
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{
@@ -76,7 +75,7 @@ func getFile(ctx context.Context, minioClient *minio.Client, bucketName, objectN
 func statFile(ctx context.Context, minioClient *minio.Client, bucketName, objectName, filePath string) {
 	objInfo, err := minioClient.StatObject(context.Background(), bucketName, objectName, minio.StatObjectOptions{})
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("err", err)
 		return
 	}
 	fmt.Println(objInfo)
@@ -97,6 +96,7 @@ func list(ctx context.Context, minioClient *minio.Client, bucketName, objectName
 			return
 		}
 		fmt.Println(object.Key)
+		fmt.Println(object.ETag)
 	}
 }
 
@@ -112,33 +112,64 @@ func remove(ctx context.Context, minioClient *minio.Client, bucketName, objectNa
 }
 
 func removeDir(ctx context.Context, minioClient *minio.Client, bucketName, objectName, filePath string) {
-	opts := minio.RemoveObjectOptions {
+	opts := minio.RemoveObjectsOptions {
 		GovernanceBypass: true,
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
 	defer cancel()
 
-	objectCh := minioClient.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+	//objectCh := minioClient.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+	//	Prefix: filePath,
+	//	Recursive: false,
+	//})
+	//
+	//keyName := ""
+	//for object := range objectCh {
+	//	if object.Err != nil {
+	//		fmt.Println(object.Err)
+	//		return
+	//	}
+	//	if path.Clean(object.Key) == objectName {
+	//		keyName = object.Key
+	//		break
+	//	}
+	//	fmt.Println(object)
+	//}
+
+	fmt.Println(filePath)
+	findChan := minioClient.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
 		Prefix: filePath,
-		Recursive: false,
+		Recursive: true,
 	})
-	rc := make(chan object)
-	for object := range objectCh {
-		if object.Err != nil {
-			fmt.Println(object.Err)
-			return
-		}
-		if object.Key == objectName {
-			break
-		}
-		fmt.Println(object)
+
+	err := minioClient.RemoveObjects(ctx, bucketName, findChan, opts)
+	if err != nil {
+		fmt.Println((<- err).Err)
+		return
 	}
-	err := minioClient.RemoveObjects(context.Background(), bucketName, objectName, opts)
+}
+
+func put(ctx context.Context, minioClient *minio.Client, bucketName, objectName, filePath string) {
+	file, err := os.Open("go.mod")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	defer file.Close()
+
+	fileStat, err := file.Stat()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	uploadInfo, err := minioClient.PutObject(context.Background(), bucketName, objectName, file, fileStat.Size(), minio.PutObjectOptions{ContentType:"application/octet-stream"})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Successfully uploaded bytes: ", uploadInfo)
 }
 
 func main() {
@@ -152,8 +183,8 @@ func main() {
 	//location := "us-east-1" region
 
 	// Upload the zip file
-	objectName := "go.mod"
-	filePath := "go.mod"
+	objectName := "www/tt"
+	filePath := "www"
 	//contentType := "application/zip"
-	list(ctx, minioClient, bucketName, objectName, filePath)
+	statFile(ctx, minioClient, bucketName, objectName, filePath)
 }
