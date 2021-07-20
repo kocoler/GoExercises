@@ -1,5 +1,7 @@
 package main
 
+
+// 贪心
 func maxProfit(prices []int) int {
     if len(prices) <= 1 {
         return 0
@@ -32,3 +34,35 @@ func maxProfit(prices []int) int {
     }
     return sum
 }
+
+// 动规
+var dp[30001][2]int
+func maxProfit(prices []int) int {
+    // 0 num 0
+    // 1 num 1
+    dp = [30001][2]int{}
+
+    dp[0][0] = 0
+    dp[0][1] = -prices[0]
+
+    lenp := len(prices)
+
+    for i := 1; i < lenp; i ++ {
+        index := i
+        // out
+        dp[i][0] = max(dp[i-1][1]+prices[index], dp[i-1][0])
+        // in
+        dp[i][1] = max(dp[i-1][0]-prices[index], dp[i-1][1])
+    }
+
+    return max(dp[lenp-1][0], dp[lenp-1][1])
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+
+    return b
+}
+
