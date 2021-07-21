@@ -1,0 +1,16 @@
+.idea
+.DS_Store
+/log
+*.log
+*.zip
+*.rar
+main
+public
+log
+*.log
+log/*.logg
+log/apiserver.log
+*.exe
+*_amd64
+
+mail*.go
