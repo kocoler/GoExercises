@@ -19,3 +19,24 @@ func productExceptSelf(nums []int) []int {
 	res[lenn-1] = dp[lenn-1][0] * dp[lenn-1][1]
 	return res
 }
+
+// 前缀和做法
+func productExceptSelf(nums []int) []int {
+	lenn := len(nums)
+
+	res := make([]int, lenn)
+	res[lenn-1] = nums[lenn-1]
+	for i := lenn - 2; i > 0; i -- {
+		res[i] = nums[i] * res[i+1]
+	}
+
+	res[0] = res[1]
+	for i := 1; i < lenn - 1; i ++ {
+		res[i] = nums[i-1] * res[i+1]
+		nums[i] = nums[i] * nums[i-1]
+	}
+
+	res[lenn-1] = nums[lenn-2]
+
+	return res
+}

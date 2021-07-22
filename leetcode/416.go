@@ -1,35 +1,27 @@
 package main
 
-import "fmt"
+func canPartition(nums []int) bool {
+	lenn := len(nums)
 
-func main() {
-	fmt.Println(hammingDistance(1, 4))
-}
+	sum := 0
+	for _, v := range nums {
+		sum += v
+	}
 
-func hammingDistance(x int, y int) int {
-	res := 0
-	for x != 0 && y != 0 {
-		if x % 2 != y % 2 {
-			res ++
-		}
-		x /= 2
-		y /= 2
+	target := sum / 2
+	if target * 2 != sum {
+		return false
 	}
-	fmt.Println(res)
-	for x != 0 {
-		if x % 2 != 0 {
-			res ++
-		}
-		x /= 2
-	}
-	fmt.Println(x, y, res)
-	if y != 0 {
-		if y % 2 != 0 {
-			res ++
-		}
-		y /= 2
-	}
-	fmt.Println(x, y, res)
 
-	return res
+	dp := make([]bool, target+1)
+
+	dp[0] = true
+	for i := 0; i < lenn; i ++ {
+		value := nums[i]
+		for j := target; j >= value; j -- {
+			dp[j] = dp[j-value] || dp[j]
+		}
+	}
+
+	return dp[target]
 }
