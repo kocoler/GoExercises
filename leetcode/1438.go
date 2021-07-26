@@ -1,68 +1,59 @@
 package main
 
-import "container/heap"
-
-// 单调队列
-
-type monotoneQueue struct {
-	value []int
-	len int
-}
-
-func (m monotoneQueue)pop() int {
-	r := m.value[0]
-	m.value = m.value[1:]
-
-	return r
-}
-
-func (m monotoneQueue)push(x int) {
-	m.value = append(m.value, x)
-}
-
-func (m monotoneQueue)length() int {
-	return m.len
-}
-
-type intHeap []int
-
-func (h intHeap) Len() int           { return len(h) }
-func (h intHeap) Less(i, j int) bool { return h[i] < h[j] }
-func (h intHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-
-func (h *intHeap) Push(x interface{}) {
-	// Push and Pop use pointer receivers because they modify the slice's length,
-	// not just its contents.
-	*h = append(*h, x.(int))
-}
-
-func (h *intHeap) Pop() interface{} {
-	old := *h
-	n := len(old)
-	x := old[n-1]
-	*h = old[0 : n-1]
-	return x
-}
-
+// 两个单调队列
 func longestSubarray(nums []int, limit int) int {
-	res := 0
-	queue := monotoneQueue{}
-	h := &intHeap{}
-	heap.Init(h)
+	var minQ, maxQ []int
+	res := 1
+
+	minQ = append(minQ, nums[0])
+	maxQ = append(maxQ, nums[0])
 
 	lenn := len(nums)
-	sum := 0
+	l := 0
+	for i := 1; i < lenn; i ++ {
+		value := nums[i]
 
-	for i := 0; i < lenn; i ++ {
+		// lenMinQ := len(minQ)
+		// lenMaxQ := len(maxQ)
+		// for i := lenMinQ - 1; i >= 0; i -- {
+		//     if minQ[i] <= value {
+		//         break
+		//     }
+		//     minQ = minQ[:lenMinQ - 1]
+		//     lenMinQ --
+		// }
+		// minQ = append(minQ, value)
+		// for i := lenMaxQ - 1; i >= 0; i -- {
+		//     if maxQ[i] >= value {
+		//         break
+		//     }
+		//     maxQ = maxQ[:lenMaxQ - 1]
+		//     lenMaxQ --
+		// }
+		// maxQ = append(maxQ, value)
+		for len(minQ) > 0 && minQ[len(minQ)-1] > value {
+			minQ = minQ[:len(minQ)-1]
+		}
+		minQ = append(minQ, value)
+		for len(maxQ) > 0 && maxQ[len(maxQ)-1] < value {
+			maxQ = maxQ[:len(maxQ)-1]
+		}
+		maxQ = append(maxQ, value)
+		for maxQ[0] - minQ[0] > limit {
 
+			if nums[l] == minQ[0] {
+				minQ = minQ[1:]
+			}
+			if nums[l] == maxQ[0] {
+				maxQ = maxQ[1:]
+			}
+
+			l ++
+		}
+		res = max(res, i-l+1)
 	}
 
 	return res
-}
-
-func abs(a, b int) int {
-	c := a - b
-
 }
 
 func max(a, b int) int {
