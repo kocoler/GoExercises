@@ -137,18 +137,30 @@ func deleteItem(ctx context.Context, client *onedrive.Client, path string) {
 	item, ok := getItem(ctx, client, path)
 	fmt.Println(item, ok)
 
-	item, err := client.DriveItems.Delete(ctx, "90232ebf366d2b7b", item.Id)
+	item, err := client.DriveItems.Delete(ctx, "", item.Id)
 	if err != nil {
 		panic(err)
 	}
 }
+
+
+func getObject(ctx context.Context, client *onedrive.Client, path string) {
+	item, err := client.DriveItems.Get(ctx, path)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(item)
+}
+
 
 func main() {
 	commonCtx := context.Background()
 
 	client := getClient(commonCtx)
 
-	deleteItem(commonCtx, client, "/t.go")
+	getObject(commonCtx, client, "t.go")
+
+	//deleteItem(commonCtx, client, "/t.go")
 	//fmt.Println(item, ok)
 
 	//userDrives(client)
