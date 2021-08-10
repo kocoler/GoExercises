@@ -1,14 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/goh-chunlin/go-onedrive/onedrive"
 	"golang.org/x/oauth2"
+	"io/ioutil"
+	"net/url"
+	"path"
 	"strings"
 )
 
-const token = ""
+const token = "EwCIA8l6BAAU6k7+XVQzkGyMv7VHB/h4cHbJYRAAARKKNdoi7xRtGLplLcWypiGlTEA09Bzehi8VZLrcsqhWjGnLkmIrt+/Jxlcr8xzf7eWOSpduwR3jU0IevgOZtYB6Iv6wAUBZ2zz8xUVt985uire3KPmfjrZKgKuQ1vK0BT+m1wARlsGLRBWWoEp8HPlIh3ApceLKlbA59SbrYOg7XTDui2Xgfl0jPczQZ0CEhzHZGMDAwzgUpLe76BlDmnZ1SxOJYLwsAfE0e6z4e0B4qctrqv93Zwjg78HNbVvlTcDzNZWsMVEVm+YZGFghie9VqOkSICbOp/WpEisCgp2hWKS+kF/mdJd7AnvhUmCYbuhuYlwHsFPG3nh9UepxOxADZgAACCWOtk1zFeRQWAKrOafDRIyu0K0mBc4WJngdABtIvemJrdAgw7H6D5YOWTmfs7H2pgs0f9JmcxrEhYNWYqpCA52+gwbDavQxlzuYmHSes8h5ocN4nXNVlKnlp0U7hECLRHh2LiqfP7HjylgV0IyZGYXI6n9YQ3ANBw4BGZvwekVzLKjBy2bmnJg0kLiBYAhAyXAFl4dbYXOQJPEH6oKpWF1mQG3WxK/PjOjHnPkpWcffmU4IeFxMpUEu1kR1UYhORoTwVg65+dsake9502ZaDF8UomakMvDcXTYcfgnNCYsbNNphONjbsS33S2ex0p6CegoOQQ8wRMJb/LeJxG3k93dAvCwQvCkGdHD81tdyCeSm7lxZqPxq7Bu0nEXGr+SyduJG8N/jYcgRAwwkR9HP3kIY23ZPhddA0f5leaUd6Le/UboGGZFS8+wnCbnzzUwgLo6mfsfwimsrUWbTvbgW6YiAdnk5vO7HB06CeckyYHbyo8OxEq5/ZGBPNCBC16EGd8vdssVya0K2qLpiWJyYWwxgDddt0JvO60JThfVBQep9rXxfVuqvyhu6uVaUK33/Z7rM9KP4SnXsoEc4Ysellid4342v/pBT2vY6bFooagofvfy7WMffWwopeiwUznXz8DeNhENPpCrRQYPDtnoPL3OpWJV6kPzfGRgIVBNx8nJ2aq19I0NQc5LG4Ednk4BY9BAFrB0IwI/FZZPROReGP9Rv7C4R6/8qKQ24MfyMwxjSKxtOKt39krAt4uUZbWeLG4p8dVUJkVlkdeum9snc6U8Uriy6ORrbIVFNtaWtYH0ur7GOAg=="
 
 // path:itemId 缓存
 // 这个回头再说吧
@@ -144,21 +148,73 @@ func deleteItem(ctx context.Context, client *onedrive.Client, path string) {
 }
 
 
-func getObject(ctx context.Context, client *onedrive.Client, path string) {
-	item, err := client.DriveItems.Get(ctx, path)
+func getObject(ctx context.Context, client *onedrive.Client, absPath string) {
+	if !path.IsAbs(absPath) {
+		panic("not an absolute path")
+	}
+	apiURL := "me/drive/root:" + url.PathEscape(absPath)
+
+	req, err := client.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(item)
+
+	var driveItem *onedrive.DriveItem
+	err = client.Do(ctx, req, false, &driveItem)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(driveItem)
 }
 
+func downloadItem(ctx context.Context, client *onedrive.Client, path string) {
+	fmt.Println(client.BaseURL.String())
+	req, err := client.NewRequest("GET", "me/drive/root:/"+ path +":/content", nil)
+	if err != nil {
+		panic(err)
+	}
+
+	type Location struct {
+		Location string `json:"Location"`
+	}
+	var res Location
+	err = client.Do(ctx, req, false, &res)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(res.Location)
+}
+
+func putObject(ctx context.Context, client *onedrive.Client, path string) {
+	readFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	reader := bytes.NewReader(readFile)
+
+	req, err := client.NewFileUploadRequest("", "", reader)
+	if err != nil {
+		panic(err)
+	}
+
+	err = client.Do(ctx, req, false, nil)
+	if err != nil {
+		panic(err)
+	}
+}
 
 func main() {
 	commonCtx := context.Background()
 
 	client := getClient(commonCtx)
 
-	getObject(commonCtx, client, "t.go")
+	//downloadItem(commonCtx, client, "t.go")
+
+	//getObject(commonCtx, client, "/t.go")
+
+	putObject(commonCtx, client, "a.go")
 
 	//deleteItem(commonCtx, client, "/t.go")
 	//fmt.Println(item, ok)
