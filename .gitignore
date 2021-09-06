@@ -14,3 +14,5 @@ log/apiserver.log
 *_amd64
 
 mail*.go
+
+/leetcode/leetcode
