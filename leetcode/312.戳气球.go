@@ -53,5 +53,5 @@
 func maxCoins(nums []int) int {
 
 }
-// @lc code=endß
+// @lc code=end
 
