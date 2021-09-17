@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	//"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 var mongoClient *mongo.Client
@@ -27,11 +29,20 @@ func getClient() {
 	mongoClient = client
 }
 
+//type Root struct {
+//	//ID string `bson:"_id" json:"_id"`
+//	Content   string `bson:"content" json:"content"`     // 内容
+//	Sense     string `bson:"sense" json:"sense"`         // 词根+意义
+//	Additions string `bson:"additions" json:"additions"` // 额外字段
+//}
+
 type Root struct {
-	//ID string `bson:"_id" json:"_id"`
-	Content   string `bson:"content" json:"content"`     // 内容
-	Sense     string `bson:"sense" json:"sense"`         // 词根+意义
-	Additions string `bson:"additions" json:"additions"` // 额外字段
+	ID              int    `json:"id"`
+	Root            string `json:"root"`    // 内容
+	Meaning         string `json:"meaning"` // 意义
+	IsLearned       bool   `json:"is_learned"`
+	VideoPreviewImg string `json:"video_preview_img"`
+	VideoURL        string `json:"video_url"`
 }
 
 type Word struct {
@@ -49,18 +60,51 @@ type Word struct {
 	Additions    string `bson:"additions" json:"additions"`
 }
 
-func insert(ctx context.Context, rootsCollection mongo.Collection) {
-	root1 := Root{
-		Content:      "aud(it)",
-		Sense:        "ag＝to do 做",
-		Additions:    "",
-	}
+func insert(ctx context.Context, rootsCollection mongo.Collection, value interface{}) {
+	//root1 := Root{
+	//	ID:              0,
+	//	Root:            "",
+	//	Meaning:         "",
+	//	IsLearned:       false,
+	//	VideoPreviewImg: "",
+	//	VideoURL:        "",
+	//}
 
-	res, err := rootsCollection.InsertOne(ctx, root1)
+	res, err := rootsCollection.InsertOne(ctx, value)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(res.InsertedID, err)
+}
+
+func queryOne(ctx context.Context, rootsCollection mongo.Collection) {
+	queryR := rootsCollection.FindOne(context.TODO(), bson.D{bson.E{Key: "user_id", Value: 1}})
+
+	bytesData, err := queryR.DecodeBytes()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(bytesData.Lookup("roots_status").StringValue())
+}
+
+func query(ctx context.Context, rootsCollection mongo.Collection) {
+	opts := options.Find()//.SetSort(bson.D{{"id", 1}}).SetSkip(0).SetLimit(10)
+	// cursor, err := rootsCollection.Find(context.TODO(), bson.D{bson.E{Key: "root", Value: bson.D{{"$regex", "a"}}}}, opts)
+	cursor, err := rootsCollection.Find(context.TODO(), bson.D{bson.E{Key: "user_id", Value: 1}}, opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Get a list of all returned documents and print them out.
+	// See the mongo.Cursor documentation for more examples of using cursors.
+	var results []bson.M
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		log.Fatal(err)
+	}
+
+	for _, v := range results {
+		fmt.Println(v)
+	}
 }
 
 func main() {
@@ -71,7 +115,7 @@ func main() {
 		}
 	}()
 
-	rootsCollection := mongoClient.Database("sourceword").Collection("roots")
+	rootsCollection := mongoClient.Database("sourceword").Collection("user_roots")
 
-
+	queryOne(ctx, *rootsCollection)
 }
