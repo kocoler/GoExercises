@@ -71,3 +71,63 @@ func check(x, y int) bool {
 
 	return true
 }
+
+
+// 9.16
+
+var words []byte
+var visted [][]bool
+var lenc int
+var lenr int
+var dis = [4][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}
+var bo [][]byte
+var lenw int
+func exist(board [][]byte, word string) bool {
+	words = []byte(word)
+	bo = board
+	lenw = len(word)
+	lenc = len(board)
+	lenr = len(board[0])
+
+	visted = make([][]bool, lenc)
+	for i := 0; i < lenc; i ++ {
+		visted[i] = make([]bool, lenr)
+	}
+
+	for i := 0; i < lenc; i ++ {
+		for j := 0; j < lenr; j ++ {
+			if bo[i][j] == words[0] {
+				visted[i][j] = true
+				if dfs(i, j, 1) {
+					return true
+				}
+				visted[i][j] = false
+			}
+
+		}
+	}
+
+	return false
+}
+
+func dfs(sc, sr int, index int) bool {
+	if index == lenw {
+		return true
+	}
+
+	for i := 0; i < 4; i++ {
+		nsr := sr + dis[i][0]
+		nsc := sc + dis[i][1]
+		if nsr > -1 && nsc > -1 && nsr < lenr && nsc < lenc && !visted[nsc][nsr] && words[index] == bo[nsc][nsr] {
+			visted[nsc][nsr] = true
+			find := dfs(nsc, nsr, index + 1)
+			if find {
+				return find
+			}
+			// rowback
+			visted[nsc][nsr] = false
+		}
+	}
+
+	return false
+}
