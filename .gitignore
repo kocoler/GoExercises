@@ -16,3 +16,8 @@ log/apiserver.log
 mail*.go
 
 /leetcode/leetcode
+
+/tests/go2sky/dubbo-go
+/tests/my-onedrive
+
+*.xlsx
