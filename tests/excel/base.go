@@ -16,6 +16,13 @@ import (
 const videoUrl = "https://cn-sxty2-cu-v-02.bilivideo.com/upgcxcode/26/58/370695826/370695826-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1629880700&gen=playurlv2&os=vcache&oi=3733009833&trid=0001aa995399260a4678b8144e7f5105b15eh&platform=html5&upsig=4427073be949b0d72db63f694d795e07&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,platform&cdnid=10924&mid=31701181&bvc=vod&nettype=0&logo=80000000"
 const imageUrl = "https://i1.hdslb.com/bfs/archive/449df90131b3a18e2fa2396bddd50e0f6f99a8b6.jpg@640w_400h_1c.webp"
 
+type videoInfo struct {
+	videoUrl string
+	imageUrl string
+}
+
+var m = map[string]videoInfo {"": {videoUrl: "", imageUrl: ""}}
+
 var mongoClient *mongo.Client
 
 func init() {
@@ -29,14 +36,15 @@ func getClient() {
 		Username: "",
 		Password: "",
 	}
-	client, err := mongo.Connect(ctx, options.Client().SetAuth(credential).ApplyURI("mongodb://112.126.76.187:27017"))
+
+	// mongodb://112.126.76.187:27017
+	client, err := mongo.Connect(ctx, options.Client().SetAuth(credential).ApplyURI("mongodb://admin:@112.126.76.187:27017/?ssl=false&authMechanism=SCRAM-SHA-1"))
 	if err != nil {
 		panic(err)
 	}
 
 	mongoClient = client
 }
-
 
 type Root struct {
 	ID              int    `bson:"id" json:"id"`
@@ -60,13 +68,17 @@ type Word struct {
 	MeaningZh          string       `bson:"meaning_zh"`          // 中文释义
 	ExampleSentences   string       `bson:"example_sentences"`   // 例句
 	ExamGrading        []int        `bson:"exam_grading"`        // 考试分级
-	Derivatives        []Derivative `bson:"derivative" `        // 派生词
+	Derivatives        []Derivative `bson:"derivative" `         // 派生词
 }
 
-var words []Word
-var roots []Root
+var words []*Word
+var roots []*Root
 
 func main() {
+	importRootsAndWords()
+}
+
+func importRootsAndWords() {
 	f, err := excelize.OpenFile("词库.xlsx")
 	if err != nil {
 		fmt.Println(err)
@@ -109,7 +121,7 @@ func main() {
 			Derivatives2Col = k
 		case "核心词根":
 			rootCol = k
-		case "词根1（词根+意义）":
+		case "词素1（词素+意义）":
 			rootMeaningCol = k
 		case "中文释义":
 			wordMeaningZhCol = k
@@ -122,43 +134,56 @@ func main() {
 	//return
 	wordCount := 0
 	rootCount := 0
-	rootMap := make(map[string]Root)
+	rootMap := make(map[string]*Root)
 	//fmt.Println(len(rows))
 	//return
-	for _, row := range rows[1:] {
+	for k, row := range rows[1:] {
+		if len(row) > 1 {
+			logs := fmt.Sprintf("importing ... col: %d, word: %s", k, row[wordCol])
+			fmt.Println(logs)
+		}
+
 		//fmt.Println(len(row))
 		//continue
-		if len(row) < 23 {
+		if len(row) < wordMeaningZhCol {
 			continue
 		}
 		wordCount++
 		//s := splitWordGender(row[wordMeaningCol])
-		exampleGrading := make([]int, ExampleGradingEndCol - ExampleGradingFromCol + 1)
-		for i := ExampleGradingFromCol; i <= ExampleGradingEndCol; i ++ {
+		exampleGrading := make([]int, ExampleGradingEndCol-ExampleGradingFromCol+1)
+		for i := ExampleGradingFromCol; i <= ExampleGradingEndCol && i < len(row); i++ {
 			if row[i] == "1.0" {
 				exampleGrading[i-ExampleGradingFromCol] = 1
 			}
 		}
 		derivative := make([]Derivative, 2)
-		derivative[0] = Derivative{Word: row[Derivatives1Col], MeaningZh: row[Derivatives1Col + 1]}
-		derivative[1] = Derivative{Word: row[Derivatives2Col], MeaningZh: row[Derivatives2Col + 1]}
+
+		if len(row) > Derivatives1Col {
+			derivative[0] = Derivative{Word: row[Derivatives1Col], MeaningZh: row[Derivatives1Col+1]}
+		}
+		if len(row) > Derivatives2Col {
+			derivative[1] = Derivative{Word: row[Derivatives2Col], MeaningZh: row[Derivatives2Col+1]}
+		}
+
 		word := Word{
 			ID:                 wordCount,
 			StructuralAnalysis: row[StructuralAnalysisCol],
 			Word:               row[wordCol],
 			MeaningEn:          row[wordMeaningEnCol],
 			MeaningZh:          row[wordMeaningZhCol],
-			ExampleSentences:   row[ExampleSentencesCol],
 			ExamGrading:        exampleGrading,
 			Derivatives:        derivative,
 		}
-		words = append(words, word)
+		if ExampleSentencesCol < len(row) {
+			word.ExampleSentences = row[ExampleSentencesCol]
+		}
+		words = append(words, &word)
 		root, ok := rootMap[row[rootCol]]
 		if ok {
 			root.Vocabularies = append(root.Vocabularies, wordCount)
 		} else {
 			rootCount++
-			root = Root{
+			root = &Root{
 				ID:              rootCount,
 				Root:            row[rootCol],
 				Meaning:         row[rootMeaningCol],
@@ -172,7 +197,7 @@ func main() {
 
 	fmt.Println(rootCount, wordCount)
 
-	roots = make([]Root, rootCount)
+	roots = make([]*Root, rootCount)
 	k := 0
 	for _, v := range rootMap {
 		roots[k] = v
