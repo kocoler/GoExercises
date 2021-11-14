@@ -6,6 +6,12 @@ package main
 // 再比较
 // 缺少复原
 
+// 递归解法：
+// 外部全局变量
+// 里面递归，递归一定是从尾到头，全局变量一定是从头到尾
+// 这个思路挺神奇的
+// 当然最优解还是双指针
+
 /**
  * Definition for singly-linked list.
  * type ListNode struct {
@@ -26,7 +32,7 @@ func isPalindrome(head *ListNode) bool {
 	f = head
 	s = s.Next
 	tail := s
-	for tail != nil &&tail.Next != nil {
+	for tail != nil && tail.Next != nil {
 		s, tail.Next, tail.Next.Next = tail.Next, tail.Next.Next, s
 	}
 
