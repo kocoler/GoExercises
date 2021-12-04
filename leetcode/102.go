@@ -9,12 +9,6 @@ package main
  * }
  */
 
-type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
-}
-
 func levelOrder(root *TreeNode) [][]int {
 	var queue []*TreeNode
 	var res [][]int
