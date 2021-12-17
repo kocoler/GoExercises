@@ -1,6 +1,9 @@
 package main
 
-import "sort"
+import (
+	"container/heap"
+	"sort"
+)
 
 type item struct {
 	start int
@@ -9,16 +12,42 @@ type item struct {
 
 type items []item
 
+type minHeap []int
+
 func (i items) Len() int {
 	return len(i)
 }
 
-func (i items) Less(a, b int) bool {
-	return i[a].end < i[b].end
+func (i items) Less(j int, k int) bool {
+	return i[j].start < i[k].start
 }
 
-func (i items) Swap(a, b int) {
+func (i items) Swap(j int, k int) {
+	i[j], i[k] = i[k], i[j]
+}
+
+func (i minHeap) Len() int {
+	return len(i)
+}
+
+func (i minHeap) Less(a, b int) bool {
+	return i[a] < i[b]
+}
+
+func (i minHeap) Swap(a, b int) {
 	i[a], i[b] = i[b], i[a]
+}
+
+func (i *minHeap) Push(x interface{}) {
+	*i = append(*i, x.(int))
+}
+
+func (i *minHeap) Pop() interface{} {
+	old := *i
+	n := len(old)
+	x := old[n-1]
+	*i = old[0 : n-1]
+	return x
 }
 
 func maxEvents(events [][]int) int {
@@ -36,15 +65,22 @@ func maxEvents(events [][]int) int {
 		}
 	}
 	sort.Sort(eventsItems)
-	num := 0
+
+	var hp minHeap
+	var num int
+	heap.Init(&hp)
+
 	l := 0
-	for i := 0; i <= m; i ++ {
-		for j := l; j < lene; j ++ {
-			if eventsItems[j].start <= i && eventsItems[j].end >= i {
-				num ++
-				l ++
-				break
-			}
+	for i := 1; i <= m; i++ {
+		for ; l < lene && eventsItems[l].start <= i; l++ {
+			heap.Push(&hp, eventsItems[l].end)
+		}
+		for len(hp) > 0 && hp[0] < i {
+			heap.Pop(&hp)
+		}
+		if len(hp) > 0 {
+			heap.Pop(&hp)
+			num++
 		}
 	}
 
