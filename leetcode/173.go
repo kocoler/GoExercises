@@ -1,5 +1,7 @@
 package main
 
+import "math"
+
 /**
  * Definition for a binary tree node.
  * type TreeNode struct {
@@ -9,103 +11,55 @@ package main
  * }
  */
 
-type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
-}
-//
-//type BSTIterator struct {
-//	root *TreeNode
-//	path []*TreeNode
-//	lens int
-//	dir bool // false: left true: right
-//	now  *TreeNode
-//}
-//
-//// 中序遍历
-//func initTree(root *TreeNode, res []int) []int {
-//	for root.Left != nil {
-//		initTree(root, res)
-//	}
-//	res = append(res, root.Val)
-//	for root.Right != nil {
-//		initTree(root, res)
-//	}
-//	return res
-//}
-//
-//func Constructor(root *TreeNode) BSTIterator {
-//	temp := root
-//	stack := []*TreeNode{}
-//	stack = append(stack, root)
-//	for temp.Left != nil {
-//		stack = append(stack, temp)
-//		temp = temp.Left
-//	}
-//	return BSTIterator{
-//		path: stack, // stack
-//		lens: len(stack),
-//		dir: false,
-//		now:  temp,
-//	}
-//}
-//
-//func (this *BSTIterator) Next() int {
-//	if this.dir {
-//
-//	} else {
-//		temp := this.path[this.lens-1]
-//		if this.now.Left
-//		if this.lens == 0 {
-//			this.dir = true
-//		}
-//	}
-//
-//}
-//
-//func (this *BSTIterator) HasNext() bool {
-//
-//}
-
+// 迭代的中序遍历
+// 要杀 pre 节点嘞
 
 type BSTIterator struct {
-	nodes []int
-	lenn  int
+	node  *TreeNode
+	queue []*TreeNode
+	//pre   *TreeNode
 }
-
-func initTree(root *TreeNode, res []int) []int {
-	if root == nil {
-		return res
-	}
-
-	initTree(root.Left, res)
-	res = append(res, root.Val)
-	initTree(root.Right, res)
-
-	return res
-}
-
 
 func Constructor(root *TreeNode) BSTIterator {
-	iterator := BSTIterator{
-		nodes: initTree(root, []int{}),
+	var queue []*TreeNode
+	node := root
+	for node != nil {
+		queue = append(queue, node)
+		node = node.Left
 	}
-	iterator.lenn = len(iterator.nodes)
-	return iterator
-}
 
+	return BSTIterator{node: node, queue: queue}
+}
 
 func (this *BSTIterator) Next() int {
-	res := this.nodes[this.lenn - 1]
-	this.nodes = this.nodes[:this.lenn-1]
-	this.lenn --
-	return res
+	ret := math.MinInt64
+
+	node := this.node
+	//for {
+	for node != nil {
+		this.queue = append(this.queue, node)
+		node = node.Left
+	}
+	node = this.queue[len(this.queue)-1]
+	this.queue = this.queue[:len(this.queue)-1]
+	//if node.Right == nil || this.pre == node.Right {
+	//	this.pre = node
+	//	this.node = nil
+	//} else {
+	ret = node.Val
+	this.node = node.Right
+	//	break
+	//}
+	//}
+
+	return ret
 }
 
-
 func (this *BSTIterator) HasNext() bool {
-	return this.lenn == 0
+	if this.node == nil && len(this.queue) == 0 {
+		return false
+	}
+	return true
 }
 
 /**
