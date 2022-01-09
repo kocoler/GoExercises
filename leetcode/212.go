@@ -1,6 +1,6 @@
 package main
 
-// trie 树减支
+// trie 树减枝
 // 应该多结合一下
 // 写的比较丑
 
@@ -14,7 +14,7 @@ var lenr int
 
 type Trie struct {
 	child [26]*Trie // child
-	flag bool // last
+	flag  bool      // last
 }
 
 func Constructor() Trie {
@@ -24,7 +24,7 @@ func Constructor() Trie {
 	}
 }
 
-func (this *Trie) Insert(word string)  {
+func (this *Trie) Insert(word string) {
 	lenw := len(word)
 	p := this
 	for i := 0; i < lenw; i++ {
@@ -68,7 +68,7 @@ func findWords(board [][]byte, words []string) []string {
 	lenr = len(board[0])
 
 	visted = make([][]bool, lenc)
-	for i := 0; i < lenc; i ++ {
+	for i := 0; i < lenc; i++ {
 		visted[i] = make([]bool, lenr)
 	}
 
@@ -77,8 +77,8 @@ func findWords(board [][]byte, words []string) []string {
 		trie.Insert(v)
 	}
 
-	for i := 0; i < lenc; i ++ {
-		for j := 0; j < lenr; j ++ {
+	for i := 0; i < lenc; i++ {
+		for j := 0; j < lenr; j++ {
 			now = append(now, bo[i][j])
 			dfs(i, j)
 			visted[i][j] = false
@@ -110,10 +110,9 @@ func dfs(sc, sr int) {
 		if nsr > -1 && nsc > -1 && nsr < lenr && nsc < lenc && !visted[nsc][nsr] {
 			now = append(now, bo[nsc][nsr])
 			dfs(nsc, nsr)
-			// rowback
+			// rollback
 			visted[nsc][nsr] = false
 			now = now[:len(now)-1]
 		}
 	}
 }
-
