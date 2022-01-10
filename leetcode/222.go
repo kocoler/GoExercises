@@ -8,12 +8,6 @@ import (
 // 这道题很有意思
 // 完全树上的二分
 
-type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
-}
-
 /**
  * Definition for a binary tree node.
  * type TreeNode struct {
@@ -24,6 +18,7 @@ type TreeNode struct {
  */
 var mask int
 var h int
+
 func countNodes(root *TreeNode) int {
 	if root == nil {
 		return 0
@@ -58,8 +53,8 @@ func findMid(root *TreeNode, mid int) *TreeNode {
 	f := 1
 	nowMask := mask >> 1
 	for f < h && node != nil {
-		f ++
-		if mid & nowMask == 0 {
+		f++
+		if mid&nowMask == 0 {
 			node = node.Left
 		} else {
 			node = node.Right
